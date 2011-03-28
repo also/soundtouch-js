@@ -1,0 +1,14 @@
+<script src="http://documentcloud.github.com/underscore/underscore.js"></script>
+<script src="src/js/core.js"></script>
+<script src="src/js/pipe.js"></script>
+<script src="src/js/rate-transposer.js"></script>
+<script src="src/js/buffer.js"></script>
+<script src="src/js/filter.js"></script>
+<script src="test.js"></script>
+<script>
+var t = new RateTransposer(true);
+t.inputBuffer.ensureAdditionalCapacity(100);
+a = new Float32Array(10);
+for (var i = 0; i < 10; i++){a[i] = i;}
+t.inputBuffer.putSamples(a, 1);
+</script>
