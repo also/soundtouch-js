@@ -20,8 +20,8 @@ FilterSupport.prototype = {
     // },
 
     fillOutputBuffer: function(numFrames) {
-        console.log('fillOutputBuffer', numFrames)
         while (this.outputBuffer.frameCount < numFrames) {
+            // TODO hardcoded buffer size
             var numInputFrames = 8192 - this.inputBuffer.frameCount;
 
             this.fillInputBuffer(numInputFrames);
