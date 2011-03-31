@@ -1,4 +1,7 @@
 var t = new RateTransposer(true);
+var s = new Stretch(true);
+//s.tempo = .5;
+t.rate = 2;
 var context = new webkitAudioContext();
 
 var buffer;
@@ -26,6 +29,7 @@ function createBuffer(arrayBuffer) {
     console.log('loaded audio in ' + (new Date() - start));
 }
 
+//loadSample('badromance.mp3')
 loadSample('track.mp3')
 
 var node = context.createJavaScriptNode(1024, 1, 1);
@@ -58,8 +62,9 @@ var source = {
             target[i * 2] = l[i + position];
             target[i * 2 + 1] = r[i + position];
         }
+        return Math.min(numFrames, l.length - position);
     }
 };
 
 
-f = new SimpleFilter(source, t);
+f = new SimpleFilter(source, s);

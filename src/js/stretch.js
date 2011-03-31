@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 /**
 * Giving this value for the sequence length sets automatic parameter value
@@ -55,7 +55,7 @@ var DEFAULT_SEEKWINDOW_MS = USE_AUTO_SEEKWINDOW_LEN;
 var DEFAULT_OVERLAP_MS = 8;
 
 // Table for the hierarchical mixing position seeking algorithm
-var __SCAN_OFFSETS = [
+var _SCAN_OFFSETS = [
     [ 124,  186,  248,  310,  372,  434,  496,  558,  620,  682,  744, 806,
       868,  930,  992, 1054, 1116, 1178, 1240, 1302, 1364, 1426, 1488,   0],
     [-100,  -75,  -50,  -25,   25,   50,   75,  100,    0,    0,    0,   0,
@@ -194,7 +194,7 @@ extend(Stretch.prototype, {
       // Calculate ideal skip length (according to tempo value)
       this.nominalSkip = this._tempo * (this.seekWindowLength - this.overlapLength);
       this.skipFract = 0;
-      this.intskip = Math.floor(this.nominalSkip + 0.5);
+      intskip = Math.floor(this.nominalSkip + 0.5);
 
       // Calculate how many samples are needed in the 'inputBuffer' to
       // process another batch of samples
@@ -258,8 +258,8 @@ extend(Stretch.prototype, {
       }
 
       // Update seek window lengths
-      this.seekWindowLength = (this.sampleRate * this.sequenceMs) / 1000;
-      this.seekLength = (this.sampleRate * this.seekWindowMs) / 1000;
+      this.seekWindowLength = Math.floor((this.sampleRate * this.sequenceMs) / 1000);
+      this.seekLength = Math.floor((this.sampleRate * this.seekWindowMs) / 1000);
     },
 
     /**
@@ -280,8 +280,7 @@ extend(Stretch.prototype, {
     /**
     * Seeks for the optimal overlap-mixing position.
     */
-    seekBestOverlapPosition: function ()
-    {
+    seekBestOverlapPosition: function () {
       if (this.bQuickSeek)
       {
           return this.seekBestOverlapPositionStereoQuick();
@@ -339,8 +338,7 @@ extend(Stretch.prototype, {
     * sample sequences are 'most alike', in terms of the highest cross-correlation
     * value over the overlapping period
     */
-    seekBestOverlapPositionStereoQuick: function ()
-    {
+    seekBestOverlapPositionStereoQuick: function () {
         var j;
         var bestOffs;
         var bestCorr;
@@ -408,8 +406,8 @@ extend(Stretch.prototype, {
     },
 
     calcCrossCorrStereo: function (mixingPos, compare) {
-      var mixing = _inputBuffer.vector;
-      mixingPos += _inputBuffer.startIndex;
+      var mixing = this._inputBuffer.vector;
+      mixingPos += this._inputBuffer.startIndex;
 
       var corr;
       var i;
@@ -439,11 +437,11 @@ extend(Stretch.prototype, {
     * Overlaps samples in 'midBuffer' with the samples in 'pInput'
     */
     overlapStereo: function (pInputPos) {
-      var pInput = _inputBuffer.vector;
-      pInputPos += _inputBuffer.startIndex;
+      var pInput = this._inputBuffer.vector;
+      pInputPos += this._inputBuffer.startIndex;
 
-      var pOutput = _outputBuffer.vector;
-      var pOutputPos = _outputBuffer.endIndex;
+      var pOutput = this._outputBuffer.vector;
+      var pOutputPos = this._outputBuffer.endIndex;
 
       var i;
       var cnt2;
@@ -462,8 +460,8 @@ extend(Stretch.prototype, {
           cnt2 = 2 * i;
           pInputOffset = cnt2 + pInputPos;
           pOutputOffset = cnt2 + pOutputPos;
-          pOutput[pOutputOffset + 0] = pInput[pInputOffset + 0] * fi + pMidBuffer[cnt2 + 0] * fTemp;
-          pOutput[pOutputOffset + 1] = pInput[pInputOffset + 1] * fi + pMidBuffer[cnt2 + 1] * fTemp;
+          pOutput[pOutputOffset + 0] = pInput[pInputOffset + 0] * fi + this.pMidBuffer[cnt2 + 0] * fTemp;
+          pOutput[pOutputOffset + 1] = pInput[pInputOffset + 1] * fi + this.pMidBuffer[cnt2 + 1] * fTemp;
       }
     },
 
@@ -473,8 +471,7 @@ extend(Stretch.prototype, {
       var temp;
       var i;
 
-      if (this.pMidBuffer == null)
-      {
+      if (this.pMidBuffer == null) {
         // if midBuffer is empty, move the first samples of the input stream
         // into it
         if (this._inputBuffer.frameCount < this.overlapLength) {
@@ -488,8 +485,7 @@ extend(Stretch.prototype, {
       var output;
       // Process samples as long as there are enough samples in 'inputBuffer'
       // to form a processing frame.
-      while (this._inputBuffer.frameCount >= this.sampleReq)
-      {
+      while (this._inputBuffer.frameCount >= this.sampleReq) {
           // If tempo differs from the normal ('SCALE'), scan for the best overlapping
           // position
           offset = this.seekBestOverlapPosition();
@@ -519,7 +515,8 @@ extend(Stretch.prototype, {
           // TODO just use .set(.slice())
           this.pMidBuffer = new Float32Array(2 * this.overlapLength);
 
-          this.appendInput(this.pMidBuffer, 2 * (offset + this.seekWindowLength - this.overlapLength), 2 * this.overlapLength);
+          var start = 2 * (offset + this.seekWindowLength - this.overlapLength);
+          this.pMidBuffer.set(this._inputBuffer.vector.slice(start, start + 2 * this.overlapLength))
 
           // Remove the processed samples from the input buffer. Update
           // the difference between integer & nominal skip step to 'skipFract'
@@ -528,18 +525,6 @@ extend(Stretch.prototype, {
           ovlSkip = Math.floor(this.skipFract);   // rounded to integer skip
           this.skipFract -= ovlSkip;       // maintain the fraction part, i.e. real vs. integer skip
           this._inputBuffer.receive(ovlSkip);
-      }
-    },
-
-    appendInput: function (dest, sourceOffset, length) {
-      var source = this._inputBuffer.vector;
-      sourceOffset += this._inputBuffer.startIndex;
-
-      var destOffset = dest.length;
-      dest.length += length;
-
-      for (var i = 0; i < length; i++) {
-        dest[i + destOffset] = source[i + sourceOffset];
       }
     }
 });
