@@ -60,7 +60,6 @@ FilterSupport.prototype = {
     }
 };
 
-
 function SimpleFilter(sourceSound, pipe) {
     FilterSupport.call(this, pipe);
     this.sourceSound = sourceSound;
@@ -102,7 +101,7 @@ extend(SimpleFilter.prototype, {
         var samples = new Float32Array(numFrames * 2);
         var numFramesExtracted = this.sourceSound.extract(samples, numFrames, this._sourcePosition);
         this._sourcePosition += numFramesExtracted;
-        this.inputBuffer.putSamples(samples);
+        this.inputBuffer.putSamples(samples, 0, numFramesExtracted);
     },
 
     extract: function(target, numFrames) {
