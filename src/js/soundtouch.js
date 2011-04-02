@@ -23,7 +23,7 @@ function SoundTouch() {
     this.tdStretch = new Stretch(false);
 
     this._inputBuffer = new FifoSampleBuffer();
-    this.intermediateBuffer = new FifoSampleBuffer();
+    this._intermediateBuffer = new FifoSampleBuffer();
     this._outputBuffer = new FifoSampleBuffer();
 
     this._rate = 0;
@@ -114,18 +114,18 @@ extend(SoundTouch.prototype, {
         if (this._rate > 1.0) {
             if (this._outputBuffer != this.rateTransposer.outputBuffer) {
                 this.tdStretch.inputBuffer = this._inputBuffer;
-                this.tdStretch.outputBuffer = this.intermediateBuffer;
+                this.tdStretch.outputBuffer = this._intermediateBuffer;
 
-                this.rateTransposer.inputBuffer = this.intermediateBuffer;
+                this.rateTransposer.inputBuffer = this._intermediateBuffer;
                 this.rateTransposer.outputBuffer = this._outputBuffer;
             }
         }
         else {
             if (this._outputBuffer != this.tdStretch.outputBuffer) {
                 this.rateTransposer.inputBuffer = this._inputBuffer;
-                this.rateTransposer.outputBuffer = this.intermediateBuffer;
+                this.rateTransposer.outputBuffer = this._intermediateBuffer;
 
-                this.tdStretch.inputBuffer = this.intermediateBuffer;
+                this.tdStretch.inputBuffer = this._intermediateBuffer;
                 this.tdStretch.outputBuffer = this._outputBuffer;
             }
         }
@@ -142,4 +142,3 @@ extend(SoundTouch.prototype, {
         }
     }
 });
-
