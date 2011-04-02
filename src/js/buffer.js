@@ -102,7 +102,6 @@ FifoSampleBuffer.prototype = {
     ensureCapacity: function (numFrames) {
         var minLength = numFrames * 2;
         if (this._vector.length < minLength) {
-            var numSamples = this.frameCount * 2;
             var newVector = new Float32Array(minLength);
             newVector.set(this._vector.slice(this.startIndex, this.endIndex));
             this._vector = newVector;
