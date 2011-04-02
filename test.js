@@ -32,15 +32,20 @@ function createBuffer(arrayBuffer) {
 //loadSample('badromance.mp3')
 loadSample('track.mp3')
 
-var node = context.createJavaScriptNode(1024, 1, 1);
+var BUFFER_SIZE = 1024;
 
-var samples = new Float32Array(2048);
+var node = context.createJavaScriptNode(BUFFER_SIZE, 1, 1);
+
+var samples = new Float32Array(BUFFER_SIZE * 2);
 
 node.onaudioprocess = function (e) {
     var l = e.outputBuffer.getChannelData(0);
     var r = e.outputBuffer.getChannelData(1);
-    f.extract(samples, 1024);
-    for (var i = 0; i < 1024; i++) {
+    var framesExtracted = f.extract(samples, BUFFER_SIZE);
+    if (framesExtracted == 0) {
+        pause();
+    }
+    for (var i = 0; i < framesExtracted; i++) {
         l[i] = samples[i * 2];
         r[i] = samples[i * 2 + 1];
     }
