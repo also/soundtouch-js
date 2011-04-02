@@ -46,7 +46,6 @@ extend(RateTransposer.prototype, {
     process: function () {
         // TODO aa filter
         var numFrames = this._inputBuffer.frameCount;
-        console.log('ensureAdditionalCapacity', numFrames / this._rate + 1)
         this._outputBuffer.ensureAdditionalCapacity(numFrames / this._rate + 1);
         var numFramesOutput = this._transpose(numFrames);
         this._inputBuffer.receive();
