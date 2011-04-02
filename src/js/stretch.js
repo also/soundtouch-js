@@ -229,6 +229,7 @@ extend(Stretch.prototype, {
       this.overlapLength = newOvl;
 
       this.pRefMidBuffer = new Float32Array(this.overlapLength * 2);
+      this.pMidBuffer = new Float32Array(this.overlapLength * 2);
     },
 
     checkLimits: function (x, mi, ma) {
@@ -511,9 +512,6 @@ extend(Stretch.prototype, {
           // 'midBuffer' for being mixed with the beginning of the next
           // processing sequence and so on
           //assert(offset + seekWindowLength <= (int)inputBuffer.numSamples());
-          
-          // TODO just use .set(.slice())
-          this.pMidBuffer = new Float32Array(2 * this.overlapLength);
 
           var start = 2 * (offset + this.seekWindowLength - this.overlapLength);
           this.pMidBuffer.set(this._inputBuffer.vector.slice(start, start + 2 * this.overlapLength))
