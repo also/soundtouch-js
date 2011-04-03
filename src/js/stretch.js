@@ -450,7 +450,6 @@ extend(Stretch.prototype, {
         }
     },
 
-
     process: function() {
         var ovlSkip;
         var offset;
@@ -496,7 +495,7 @@ extend(Stretch.prototype, {
             // 'midBuffer' for being mixed with the beginning of the next
             // processing sequence and so on
             //assert(offset + seekWindowLength <= (int)inputBuffer.numSamples());
-            var start = 2 * (offset + this.seekWindowLength - this.overlapLength);
+            var start = this.inputBuffer.startIndex + 2 * (offset + this.seekWindowLength - this.overlapLength);
             this.pMidBuffer.set(this._inputBuffer.vector.slice(start, start + 2 * this.overlapLength))
 
             // Remove the processed samples from the input buffer. Update
