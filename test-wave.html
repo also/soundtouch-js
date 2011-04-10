@@ -6,21 +6,40 @@
 <script src="src/js/filter.js"></script>
 <script src="src/js/stretch.js"></script>
 <script src="src/js/soundtouch.js"></script>
-<script src="src/js/wave.js"></script>
-<script src="waa.js"></script>
-<script src="test.js"></script>
-<script>
-var count = 0;
 
-function increment() {
-    console.log('increment')
-    if (count++ > 100) {
-        pause();
-        throw Error('whoa');
-    }
+<script src="src/js/compat.js"></script>
+<script src="src/js/wave.js"></script>
+<script src="common.js"></script>
+<script src="ada.js"></script>
+<script>
+var st = new SoundTouch();
+var sampleRate = 44100;
+var bufferSize = sampleRate / 2;
+var player;
+
+var f;
+function init() {
+    var reader = new WaveReader(document.getElementById('file').files[0]);
+    var source = new AsyncSource(reader, bufferSize, 3);
+    reader.onheaders = function () {
+        source.alloc();
+        source.start();
+    };
+    var filterSource = new AsyncFilterSource(source);
+    f = new SimpleFilter(filterSource, st);
+    player = new FilterPlayer(f);
+}
+
+function play() {
+    player.play();
+}
+
+function pause() {
+    player.pause();
 }
 </script>
 <iframe id="frame" style="display: none"></iframe>
+<input type="file" id="file"/>
 <input type="range" id="pitch" min="0.5" max="2" value="1" step="0.01" onchange="st.pitch = this.value"/>
 <input type="range" id="tempo" min="0.5" max="2" value="1" step="0.01" onchange="st.tempo = this.value"/>
 <input type="range" id="rate" min="0.5" max="2" value="1" step="0.01" onchange="st.rate = this.value"/>
