@@ -496,7 +496,7 @@ extend(Stretch.prototype, {
             // processing sequence and so on
             //assert(offset + seekWindowLength <= (int)inputBuffer.numSamples());
             var start = this.inputBuffer.startIndex + 2 * (offset + this.seekWindowLength - this.overlapLength);
-            this.pMidBuffer.set(this._inputBuffer.vector.slice(start, start + 2 * this.overlapLength))
+            this.pMidBuffer.set(this._inputBuffer.vector.subarray(start, start + 2 * this.overlapLength))
 
             // Remove the processed samples from the input buffer. Update
             // the difference between integer & nominal skip step to 'skipFract'

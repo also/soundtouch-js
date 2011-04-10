@@ -42,15 +42,14 @@ FilterSupport.prototype = {
     fillOutputBuffer: function(numFrames) {
         while (this.outputBuffer.frameCount < numFrames) {
             // TODO hardcoded buffer size
-            var numInputFrames = 8192 - this.inputBuffer.frameCount;
+            var numInputFrames = (8192 * 2) - this.inputBuffer.frameCount;
 
             this.fillInputBuffer(numInputFrames);
 
-            if (this.inputBuffer.frameCount < 8192) {
+            if (this.inputBuffer.frameCount < (8192 * 2)) {
                 break;
                 // TODO flush pipe
             }
-
             this._pipe.process();
         }
     },

@@ -65,7 +65,7 @@ FifoSampleBuffer.prototype = {
         this.ensureCapacity(numFrames + this._frameCount);
 
         var destOffset = this.endIndex;
-        this._vector.set(samples.slice(sourceOffset, sourceOffset + numSamples), destOffset);
+        this._vector.set(samples.subarray(sourceOffset, sourceOffset + numSamples), destOffset);
 
         this._frameCount += numFrames;
     },
@@ -89,21 +89,21 @@ FifoSampleBuffer.prototype = {
     receiveSamples: function (output, numFrames) {
         var numSamples = numFrames * 2;
         var sourceOffset = this.startIndex;
-        output.set(this._vector.slice(sourceOffset, sourceOffset + numSamples));
+        output.set(this._vector.subarray(sourceOffset, sourceOffset + numSamples));
         this.receive(numFrames);
     },
 
     extract: function (output, position, numFrames) {
         var sourceOffset = this.startIndex + position * 2;
         var numSamples = numFrames * 2;
-        output.set(this._vector.slice(sourceOffset, sourceOffset + numSamples));
+        output.set(this._vector.subarray(sourceOffset, sourceOffset + numSamples));
     },
 
     ensureCapacity: function (numFrames) {
         var minLength = numFrames * 2;
         if (this._vector.length < minLength) {
             var newVector = new Float32Array(minLength);
-            newVector.set(this._vector.slice(this.startIndex, this.endIndex));
+            newVector.set(this._vector.subarray(this.startIndex, this.endIndex));
             this._vector = newVector;
             this._position = 0;
         }
@@ -118,7 +118,7 @@ FifoSampleBuffer.prototype = {
 
     rewind: function () {
         if (this._position > 0) {
-            this._vector.set(this._vector.slice(this.startIndex, this.endIndex));
+            this._vector.set(this._vector.subarray(this.startIndex, this.endIndex));
             this._position = 0;
         }
     }
