@@ -34,7 +34,7 @@ loadSample('track.mp3')
 
 var BUFFER_SIZE = 1024;
 
-var node = context.createJavaScriptNode(BUFFER_SIZE, 1, 1);
+var node = context.createJavaScriptNode(BUFFER_SIZE, 2, 2);
 
 var samples = new Float32Array(BUFFER_SIZE * 2);
 
